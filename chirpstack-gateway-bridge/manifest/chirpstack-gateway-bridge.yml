@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chirpstack-gateway-bridge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chirpstack-gateway
+  template:
+    metadata:
+      labels:
+        app: chirpstack-gateway
+    spec:
+      containers:
+      - name: chirpstack-gateway-bridge
+        image: oliveirakundocker/chirpstack-gateway-bridge:v0.2
+      - name: lora-pkt-forwarder
+        image: oliveirakundocker/lora-pkt-forwarder:v0.1
+        ports:
+          - name: udp-port
+            containerPort: 1777
+            protocol: UDP
+
