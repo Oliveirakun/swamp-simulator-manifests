@@ -1,0 +1,22 @@
+{
+  "name": "swamp-iotagent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "async": "*",
+    "body-parser": "*",
+    "express": "*",
+    "mongoose": "*",
+    "dotenv": "*",
+    "nconf": "*",
+    "require-dir": "*",
+    "axios": "*",
+    "mqtt": "^2.17.0"
+  },
+  "author": "Ivan Zyrianoff",
+  "license": "ISC"
+}

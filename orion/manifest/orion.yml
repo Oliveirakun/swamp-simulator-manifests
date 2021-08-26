@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fiware-orion  
+spec:
+  type: NodePort
+  ports:
+    - port: 1026
+      targetPort: 1026
+      nodePort: 31026      
+  selector:
+    app: orion
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fiware-orion  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orion
+  template:
+    metadata:
+      labels:
+        app: orion
+    spec:      
+      containers:
+      - name: fiware-orion
+        image: fiware/orion:3.1.0
+        command: ["/bin/sh"]
+        args: ["-c", "/usr/bin/contextBroker -fg -multiservice -ngsiv1Autocast -disableFileLog -dbhost $(DB_ADDRESS) -logLevel DEBUG"]
+        ports:
+          - name: tcp-port
+            containerPort: 1026
+            protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cratedb  
+spec:
+  type: ClusterIP
+  ports:
+    # Admin UI
+    - name: admin-port
+      port: 4200
+      targetPort: 4200
+    # Transport protocol  
+    - name: transport-port
+      port: 4300 
+      targetPort: 4300        
+  selector:
+    app: crate
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cratedb  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crate
+  template:
+    metadata:
+      labels:
+        app: crate
+    spec:      
+      containers:
+      - name: cratedb
+        image: crate/crate:4.6.1        
+        args:
+          - -Cnetwork.host=_eth0_
+          - -Ccluster.name=democluster
+          - -Chttp.cors.enabled=true
+          - -Chttp.cors.allow-origin="*"
+          - -Cdiscovery.type=single-node
+        ports:
+          - name: admin-port
+            containerPort: 4200
+            protocol: TCP
+          - name: transport-port
+            containerPort: 4300
+            protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quantumleap 
+spec:
+  type: NodePort
+  ports:
+    - port: 8668
+      targetPort: 8668
+      nodePort: 31668     
+  selector:
+    app: quantum
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quantumleap  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quantum
+  template:
+    metadata:
+      labels:
+        app: quantum
+    spec:      
+      containers:
+      - name: quantumleap
+        image: smartsdk/quantumleap:0.8        
+        ports:
+          - name: tcp-port
+            containerPort: 8668
+            protocol: TCP
+
+
+      
+       
+

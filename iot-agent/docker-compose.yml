@@ -1,0 +1,115 @@
+version: "3.1"
+services:
+  iot-agent:
+    build: .
+    hostname: iot-agent
+    container_name: iot-agent
+    expose:
+      - "3456"
+    ports:
+      - "3456:3456"
+    networks:
+      - default
+    environment: 
+      - TZ=America/Sao_Paulo
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    expose:
+      - "1883"
+      - "9001"
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      - default
+    environment: 
+      - TZ=America/Sao_Paulo
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  mongo-db:
+    image: mongo:3.6
+    hostname: mongo-db
+    container_name: db-mongo
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017"
+    networks:
+      - default
+    command: --bind_ip_all --smallfiles
+    environment: 
+      - TZ=America/Sao_Paulo
+    volumes:
+      - mongo-db:/data
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  orion:
+    image: fiware/orion:2.0.0
+    hostname: orion
+    container_name: fiware-orion
+    depends_on:
+      - mongo-db
+    networks:
+      - default
+    expose:
+      - "1026"
+    ports:
+      - "1026:1026"
+    command: -dbhost mongo-db -logLevel DEBUG -corsOrigin __ALL
+    environment: 
+      - TZ=America/Sao_Paulo
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+
+  crate-db:
+    image: crate/crate
+    hostname: crate-db
+    container_name: db-crate
+    ports:
+      # Admin UI
+      - "4200:4200"
+      # Transport protocol
+      - "4300:4300"
+    command: -Cnetwork.host=_eth0_ -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
+    environment: 
+      - TZ=America/Sao_Paulo
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+
+  quantum-leap:
+    image: smartsdk/quantumleap
+    hostname: quantum-leap
+    container_name: fiware-quantum-leap
+    ports:
+      - "8668:8668"
+    depends_on:
+      - crate-db
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      - CRATE_HOST=crate-db
+      - TZ=America/Sao_Paulo
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 192.168.3.0/24
+
+volumes:
+  mongo-db:
+  cratedb:
+     

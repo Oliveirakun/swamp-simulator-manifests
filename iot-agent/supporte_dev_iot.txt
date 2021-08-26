@@ -1,0 +1,722 @@
+
+curl -iX GET \
+  'http://10.125.136.162:1026/iot/devices' 
+  curl 10.125.136.162:1026/v2/entities -s -S -H 'Accept: application/json' -H 'fiware-service: openiot' -H 'fiware-servicepath: /' | python -mjson.tool
+
+
+
+
+curl -iX POST \
+  'http://localhost:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "device",
+     "entity_name": "urn:ngsi-ld:SoilProbe:1",
+     "entity_type": "SoilProbe",
+     "attributes": [
+      { "object_id": "ts", "name": "timestamp",  "type": "Number" }
+     ],
+	 "dev_eui": "0102030405060708",
+	 "application_id": "1",
+	 "broker_address":"mosquitto",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+application/1/0102030405060708/rx { }
+
+
+curl -iX POST \
+  'http://172.17.132.215:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+	"description": "Notify sink of all DEVICE  changes",
+	"subject": {
+		"entities": [{
+			"idPattern": "urn:ngsd-ld:Device:1"
+		}],
+		"condition": {
+			"attrs": ["timestamp"]
+		}
+	},
+	"notification": {
+		"http": {
+			"url": "http://sink:3002/message"
+		},
+		"attrs": [
+			"timestamp"
+		],
+		"attrsFormat": "legacy"
+	}
+}'
+
+curl -iX POST \
+  'http://172.17.132.215:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+	"description": "Notify sink of all DEVICE  changes",
+	"subject": {
+		"entities": [{
+			"idPattern": "urn:ngsd-ld:Device:1"
+		}],
+		"condition": {
+			"attrs": ["timestamp"]
+		}
+	},
+	"notification": {
+		"http": {
+			"url": "http://172.17.132.215:3002/message"
+		},
+		"attrs": [
+			"timestamp"
+		],
+		"attrsFormat": "legacy"
+	}
+}'
+
+curl -iX POST \
+  'http://172.17.132.215:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "device",
+     "entity_name": "urn:ngsd-ld:Device:1",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "ts", "name": "timestamp",  "type": "Number" }
+    ],
+	 "dev_eui": "0102030405060708",
+	 "application_id": "1",
+	 "broker_address":"mosquitto",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+
+curl -iX POST \
+  'http://localhost:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "device",
+     "entity_name": "urn:ngsd-ld:ProbeLanapre:1",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "S", "name": "timestamp",  "type": "Number" },
+      { "object_id": "I", "name": "identifier",  "type": "Number" },
+      { "object_id": "H1", "name": "moisture1",  "type": "Number" },
+      { "object_id": "H2", "name": "moisture2",  "type": "Number" },
+      { "object_id": "H3", "name": "moisture3",  "type": "Number" }
+     ],
+	 "dev_eui": "0012f80000300117",
+	 "application_id": "1",
+	 "broker_address":"200.19.230.31",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+
+curl -iX POST \
+  'http://localhost:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "device",
+     "entity_name": "urn:ngsd-ld:ProbeLanapre:2",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "S", "name": "timestamp",  "type": "Number" },
+      { "object_id": "I", "name": "identifier",  "type": "Number" },
+      { "object_id": "H1", "name": "moisture1",  "type": "Number" },
+      { "object_id": "H2", "name": "moisture2",  "type": "Number" },
+      { "object_id": "H3", "name": "moisture3",  "type": "Number" }
+     ],
+	 "dev_eui": "0012f80000300120",
+	 "application_id": "1",
+	 "broker_address":"200.19.230.31",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+
+
+curl -iX POST \
+  'http://localhost:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "device",
+     "entity_name": "urn:ngsd-ld:ProbeGuasp:1",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "S", "name": "timestamp",  "type": "Number" },
+      { "object_id": "I", "name": "identifier",  "type": "Number" },
+      { "object_id": "H1", "name": "moisture1",  "type": "Number" },
+      { "object_id": "H2", "name": "moisture2",  "type": "Number" },
+      { "object_id": "H3", "name": "moisture3",  "type": "Number" }
+     ],
+	 "dev_eui": "1bc0f73caf72d467",
+	 "application_id": "1",
+	 "broker_address":"mosquitto",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+
+curl -iX POST \
+  'http://localhost:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "device",
+     "entity_name": "urn:ngsd-ld:ProbeGuasp:2",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "S", "name": "timestamp",  "type": "Number" },
+      { "object_id": "I", "name": "identifier",  "type": "Number" },
+      { "object_id": "H1", "name": "moisture1",  "type": "Number" },
+      { "object_id": "H2", "name": "moisture2",  "type": "Number" },
+      { "object_id": "H3", "name": "moisture3",  "type": "Number" }
+     ],
+	 "dev_eui": "754366e02ff23515",
+	 "application_id": "1",
+	 "broker_address":"mosquitto",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+
+curl -iX POST \
+  'http://localhost:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "device",
+     "entity_name": "urn:ngsd-ld:ProbeGuasp:1",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "S", "name": "timestamp",  "type": "Number" },
+      { "object_id": "I", "name": "timestamp2",  "type": "Number" },
+      { "object_id": "V1", "name": "voltage1",  "type": "Number" },
+      { "object_id": "V2", "name": "voltage2",  "type": "Number" },
+      { "object_id": "V3", "name": "voltage3",  "type": "Number" },
+      { "object_id": "V4", "name": "voltage4",  "type": "Number" }
+     ],
+	 "dev_eui": "1bc0f73caf72d467",
+	 "application_id": "1",
+	 "broker_address":"mosquitto",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+//broker address 200.19.230.31:1883
+
+
+application/1/device/0123456789012346/rx {"applicationID":"1","applicationName":"app-lana","deviceName":"GambiLora","devEUI":"0123456789012346","txInfo":{"frequency":916400000,"dr":5},"adr":true,"fCnt":26131,"fPort":1,"data":"VDF8MjQuOXxIMXwzOS4xfEgyfDM5LjEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="}
+
+S|1901011200|I|0001|T1|23.4|H1|649.4|H2|556.6
+
+curl -iX POST \
+  'http://localhost:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "app-lanapre",
+     "entity_name": "urn:ngsd-ld:Probe:1",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "I", "name": "sensorId",  "type": "Number" },
+      { "object_id": "S", "name": "timestamp",  "type": "Number" },
+      { "object_id": "T1", "name": "temperature1,  "type": "Number" },
+      { "object_id": "T2", "name": "temperature2",  "type": "Number" },
+      { "object_id": "H1", "name": "humidity1",  "type": "Number" },
+      { "object_id": "H2", "name": "humidity2",  "type": "Number" }
+     ],
+	 "dev_eui": "0123456789012346",
+	 "application_id": "1",
+	 "broker_address":"200.19.230.31:1883",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+
+S|1901011200 ok
+|I|0005 ok
+|T1|24.2 ok
+|T2|24.7 ok
+|H1|4404.3|H2|
+
+curl -iX POST \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+	"description": "Notify QuantumLeap of Lanapre Probe Changes",
+	"subject": {
+		"entities": [{
+			"idPattern": "urn:ngsd-ld:Probe:1"
+		}],
+		"condition": {
+			"attrs": [
+				"timestamp"
+			]
+		}
+	},
+	"notification": {
+		"http": {
+			"url": "http://fiware-quantum-leap:8668/v2/notify"
+		},
+		"attrs": ["timestamp", "humidity1", "humidity2", "sensorId", "temperature"],
+		"metadata": ["dateCreated", "dateModified"]
+	},
+	"throttling": 1
+}'
+
+
+curl -iX POST \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+	"description": "Notify QuantumLeap of Weather Prevision Changes",
+	"subject": {
+		"entities": [{
+			"idPattern": ".*Current"
+		}],
+		"condition": {
+			"attrs": [
+				"dateCreated"
+			]
+		}
+	},
+	"notification": {
+		"http": {
+			"url": "http://fiware-quantum-leap:8668/v2/notify"
+		},
+		"attrs": ["location", "validity", "temperature", "temperatureMinimum", "temperatureMaximum", "relativeHumidity","rain","wind","cloudness"],
+		"metadata": ["dateCreated", "dateModified"]
+	},
+	"throttling": 1
+}'
+
+curl -iX POST   'http://localhost:3456/iot/devices'   -H 'Content-Type: application/json'   -H 'fiware-service: openiot'   -H 'fiware-servicepath: /'   -d '{
+ "devices": [
+   {
+     "device_id":   "app-lana",
+     "entity_name": "urn:ngsd-ld:Gstick:1",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "T1", "name": "timestamp-1",  "type": "Number" },
+      { "object_id": "H1", "name": "humidity-1",  "type": "Number" },
+      { "object_id": "H2", "name": "humidity-2",  "type": "Number" }
+     ],
+ "dev_eui": "0123456789012346",
+ "application_id": "1",
+ "broker_address":"200.19.230.31:1883",
+ "orion_address": "orion"
+   }
+ ]
+
+
+curl -iX POST \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+	"description": "Notify QuantumLeap of Lanapre Probe Changes",
+	"subject": {
+		"entities": [{
+			"idPattern": "urn:ngsd-ld:ProbeReal:1"
+		}],
+		"condition": {
+			"attrs": [
+            "humidity-1"
+			]
+		}
+	},
+	"notification": {
+		"http": {
+			"url": "http://fiware-quantum-leap:8668/v2/notify"
+		},
+		"attrs": ["humidity-1"],
+		"metadata": ["dateCreated", "dateModified"]
+	},
+	"throttling": 1
+}'
+
+
+
+curl -iX GET \
+  'http://localhost:3456/iot/devices' 
+
+curl -iX POST \
+  'http://localhost:3456/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "device",
+     "entity_name": "urn:ngsd-ld:Device:1",
+     "entity_type": "Probe",
+     "attributes": [
+      { "object_id": "ts", "name": "timestamp",  "type": "Number" },
+	    { "object_id": "m1", "name": "counter", "type": "Number" }
+     ],
+	 "dev_eui": "0102030405060708",
+	 "application_id": "1",
+	 "broker_address":"mosquitto",
+	 "orion_address": "orion"
+   }
+ ]
+}'
+
+
+curl -iX POST \
+  'http://localhost:3000/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "dragino",
+     "entity_name": "urn:ngsd-ld:Dragino:2",
+     "entity_type": "Probe",
+     "attributes": [
+       { "object_id": "t", "name": "temperature",  "type": "Float" },
+	   { "object_id": "m", "name": "moisture", "type": "Float" }
+     ],
+	 "dev_eui": "0000000000000000",
+	 "application_id": "2",
+	 "broker_address":"localhost",
+	 "orion_address": "localhost"
+   }
+ ]
+}'
+
+curl -iX POST \
+  'http://localhost:3000/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "dragino",
+     "entity_name": "urn:ngsd-ld:Dragino:3",
+     "entity_type": "Probe",
+     "attributes": [
+       { "object_id": "t", "name": "temperature",  "type": "Float" },
+	   { "object_id": "m", "name": "moisture", "type": "Float" }
+     ],
+	 "dev_eui": "0000000000000001",
+	 "application_id": "3",
+	 "broker_address":"localhost",
+	 "orion_address": "localhost"
+   }
+ ]
+}'
+
+
+
+curl localhost:1026/v2/entities -s -S -H 'Accept: application/json' -H 'fiware-service: openiot' -H 'fiware-servicepath: /' | python -mjson.tool
+curl localhost:1026/v2/entities -s -S -H 'Accept: application/json' | python -mjson.tool
+
+curl localhost:1026/v2/subscriptions -s -S -H 'Accept: application/json' -H 'fiware-service: openiot' -H 'fiware-servicepath: /' | python -mjson.tool
+
+
+
+ mosquitto_pub -h "localhost" -t "application/1/device/0123456789012345/rx" -m "{\"applicationID\":\"1\",\"applicationName\":\"app-lana\",\"deviceName\":\"dragino\",\"devEUI\":\"0123456789012345\",\"txInfo\":{\"frequency\":914900000,\"dr\":5},\"adr\":true,\"fCnt\":559,\"fPort\":1,\"data\":\"dHwxM3x5fDEz\"}"
+
+git remote set-url origin https://github.com/ivanzy/swamp-iotagent.git
+
+curl -X POST 'http://172.17.132.164:1026/v2/entities' -H 'Content-Type:application/json' -d '{"id":"urn:ngsd-ld:Dragino:1","type":"Probe","timezone":"America/Sao_Paulo","teste":{"value":"20.0","type":"Float"},"teste2":{"value":"123","type":"Float"}}'
+
+curl 172.17.132.164:1026/v2/entities -s -S --header 'Content-Type: application/json' -d '{"id":"urn:ngsd-ld:Dragino:1","type":"Probe","timezone":"America/Sao_Paulo","teste":{"value":"20.0","type":"Float"},"teste2":{"value":"123","type":"Float"}}'
+
+
+
+
+curl 172.17.132.164:1026/v2/entities -s -S --header 'Content-Type: application/json' -d '{"id":"urn:ngsd-ld:Dragino:1","type":"Probe","teste":{"value":"20.0","type":"Float"},"teste2":{"value":"123","type":"Float"}}'
+curl localhost:1026/v2/entities -s -S -H 'Accept: application/json' | python -mjson.tool
+
+curl 172.17.132.164:1026/v2/entities/urn:ngsd-ld:Dragino:5/attrs --header 'Content-Type: application/json' -X PATCH -d '{"teste":{"value":"99999.0","type":"Float"},"teste2":{"value":"1","type":"Float"}}'
+
+
+
+curl -iX POST \
+  'http://localhost:1026/v2/subscriptions/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "description": "Notify QuantumLeap of timestamp changes of device",
+  "subject": {
+    "entities": [
+      {
+        "idPattern": "urn:ngsd-ld:Device:1"
+      }
+    ],
+    "condition": {
+      "attrs": [
+        "timestamp" 
+      ]
+    }
+  },
+  "notification": {
+    "http": {
+      "url": "http://fiware-quantum-leap:8668/v2/notify"
+    },
+    "attrs": [
+      "timestamp"
+    ],
+    "metadata": ["dateCreated", "dateModified"]
+  },
+  "throttling": 1
+}'
+
+curl -X GET \
+  'http://localhost:8668/v2/entities/urn:ngsd-ld:Gstick:1/attrs/humidity?=3&limit=3' \
+  -H 'Accept: application/json' \
+  -H 'Fiware-Service: openiot' \
+  -H 'Fiware-ServicePath: /'
+
+  curl -X GET \
+  'http://localhost:8668/v2/entities/Guaspari-Current/attrs/cloudness?offset=3&limit=3' \
+  -H 'Accept: application/json' 
+
+
+
+curl -X GET \
+  'http://localhost:8668/v2/entities/Guaspari-Current/attrs/wind?=3&limit=1' \
+  -H 'Accept: application/json' 
+
+  curl -iX POST \
+  'http://localhost:4200/_sql' \
+  -H 'Content-Type: application/json' \
+  -d '{"stmt":"SHOW SCHEMAS"}'
+
+  curl -X POST \
+  'http://localhost:4200/_sql' \
+  -H 'Content-Type: application/json' \
+  -d '{"stmt":"SHOW TABLES"}'
+
+  curl -iX POST \
+  'http://localhost:4200/_sql' \
+  -H 'Content-Type: application/json' \
+  -d '{"stmt":"SELECT * FROM mtopeniot.etprobe LIMIT 10"}'
+
+  curl localhost:1026/v2/subscriptions -s -S -H 'Accept: application/json' -H 'fiware-service: openiot' -H 'fiware-servicepath: /' | python -mjson.tool
+  curl localhost:1026/v2/subscriptions -s -S -H 'Accept: application/json'| python -mjson.tool
+
+curl -iX DELETE -s -S -H 'Accept: application/json' -H 'fiware-service: openiot' -H 'fiware-servicepath: /'  \
+  --url 'http://localhost:1026/v2/subscriptions/5c5c7a8c0c818a55db4e7a84'
+
+curl -X GET \
+  'http://localhost:8668/v2/entities/urn:ngsd-ld:Probe:1/attrs/humidity1?=3&limit=3' \
+  -H 'Accept: application/json' \
+  -H 'Fiware-Service: openiot' \
+  -H 'Fiware-ServicePath: /'
+
+curl -X GET \
+  'http://localhost:8668/v2/entities/Guaspari-Current/attrs/temperature?=3&limit=3' \
+  -H 'Accept: application/json' \
+  -H 'Fiware-Service: openiot' \
+  -H 'Fiware-ServicePath: /'
+
+
+curl -X PATCH \
+  'http://localhost:1026/v2/entities/urn:ngsd-ld:Probe:1/attrs' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+  "timestamp": {
+    "value": "1440",
+    "type": "Number"
+  },
+  "humidity1": {
+    "value": "33.3",
+    "type": "Number"
+  },
+  "humidity2": {
+    "value": "22.3",
+    "type": "Number"
+  }
+}'
+
+
+Service group:
+curl -iX POST \
+  'http://localhost:4041/iot/services' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "services": [
+   {
+     "apikey":      "eafcfa5ce3f401d6d7f5b492fb38ca75",
+     "cbroker":     "http://orion:1026",
+     "entity_type": "urn:ngsd-ld",
+     "resource":    ""
+   }
+ ]
+}'
+Device: 
+curl -iX POST \
+  'http://localhost:4041/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{
+ "devices": [
+   {
+     "device_id":   "probe1",
+     "entity_name": "urn:ngsi-ld:SoilProbe:1",
+     "entity_type": "SoilProbe",
+     "timezone":    "America/Sao_Paulo",
+     "attributes": [
+       { "object_id": "t1", "name": "soilTemperatureDepth1", "type": "number" },
+       { "object_id": "t2", "name": "soilTemperatureDepth2", "type": "number" },
+       { "object_id": "t3", "name": "soilTemperatureDepth3", "type": "number" },
+       { "object_id": "c1", "name": "soilConductivityDepth1", "type": "number" },
+       { "object_id": "c2", "name": "soilConductivityDepth2", "type": "number" },
+       { "object_id": "c3", "name": "soilConductivityDepth3", "type": "number" },
+       { "object_id": "m1", "name": "soilMoistureRawDepth1", "type": "number" },
+       { "object_id": "m2", "name": "soilMoistureRawDepth2", "type": "number" },
+       { "object_id": "m3", "name": "soilMoistureRawDepth3", "type": "number" }
+     ],
+     "static_attributes": []
+   }
+ ]
+}'
+
+curl -iX POST \
+  'http://localhost:1026/v2/entities/' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -d '{  
+    "id": "urn:ngsi-ld:SoilProbe:1",  
+    "type": "SoilProbe",    
+    "name": {  
+        "type": "Text",  
+        "value": "3 depth soil probe"  
+    },  
+    "location": {  
+        "type": "geo:json",  
+        "value": {  
+            "type": "Point", 
+            "coordinates": [  
+                13.3986,  
+                52.5547  
+            ]  
+        }  
+    },  
+    "firmware": {  
+        "type": "Text",  
+        "value": "release 0.0.1"  
+    },  
+    "manufacturer": {  
+        "type": "Text",  
+        "value": "Embrapa"  
+    },   
+    "IoTimestamp":{ 
+        "type":"Number",  
+        "value":""  
+    },  
+    "timestamp":{ 
+        "type":"Number",  
+        "value":""  
+    },  
+    "numberOfSensors":{ 
+        "type":"Number",  
+        "value":"3"  
+    },  
+    "soilMoistureRawDepth1": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilMoistureRawDepth2": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilMoistureRawDepth3": { 
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilMoistureCalibratedDepth1": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilMoistureCalibratedDepth2": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilMoistureCalibratedDepth3": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilTemperatureDepth1": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilTemperatureDepth2": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilTemperatureDepth3": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilConductivityDepth1": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilConductivityDepth2": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "soilConductivityDepth3": {  
+        "type": "number",  
+        "value": "1.5"  
+    },  
+    "refManagementZone": {  
+        "type": "Relationship",  
+        "value": "urn:ngsi-ld:ManagementZone:001"  
+    }
+}'
