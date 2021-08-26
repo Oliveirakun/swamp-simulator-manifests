@@ -1,0 +1,222 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: eclipse-mosquitto
+spec:
+  type: NodePort
+  ports:
+    - port: 1884
+      targetPort: 1884
+      nodePort: 31884
+  selector:
+    app: mosquitto
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eclipse-mosquitto
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mosquitto
+  template:
+    metadata:
+      labels:
+        app: mosquitto
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: eclipse-mosquitto-config      
+      containers:
+      - name: eclipse-mosquitto
+        image: eclipse-mosquitto:1.6
+        volumeMounts:
+          - mountPath: /mosquitto/config
+            name: config
+        ports:
+          - name: tcp-port
+            containerPort: 1884
+            protocol: TCP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eclipse-mosquitto-config
+data:
+    mosquitto.conf: |
+      listener 1884      
+                          
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresdb  
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432      
+  selector:
+    app: postgres
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresdb  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:      
+      containers:
+      - name: postgresdb
+        image: postgres:13-alpine
+        ports:
+          - name: tcp-port
+            containerPort: 5432
+            protocol: TCP            
+      
+---        
+apiVersion: v1
+kind: Service
+metadata:
+  name: redisdb
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379      
+  selector:
+    app: redis
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redisdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:      
+      containers:
+      - name: redisdb
+        image: redis:6-alpine
+        ports:
+          - name: tcp-port
+            containerPort: 6379
+            protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chirpstack-network-server  
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000            
+  selector:
+    app: chirpstack-network      
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chirpstack-network-server  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chirpstack-network
+  template:
+    metadata:
+      labels:
+        app: chirpstack-network
+    spec:      
+      volumes:
+      - name: config
+        configMap:
+          name: chirpstack-network-server-config             
+      containers:
+      - name: chirpstack-network-server
+        image: chirpstack/chirpstack-network-server:3.14
+        volumeMounts:
+          - mountPath: /etc/chirpstack-network-server
+            name: config
+        ports:
+          - name: tcp-port
+            containerPort: 8000
+            protocol: TCP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chirpstack-network-server-config
+data:
+    chirpstack-network-server.toml: |
+      [network_server]
+      # Network identifier (NetID, 3 bytes) encoded as HEX (e.g. 010203)
+      net_id="000000"
+
+        [network_server.band]
+        name="EU868"
+
+        # LoRaWAN network related settings.
+        [network_server.network_settings]
+    
+          [[network_server.network_settings.extra_channels]]
+          frequency=867100000
+          min_dr=0
+          max_dr=5
+
+          [[network_server.network_settings.extra_channels]]
+          frequency=867300000
+          min_dr=0
+          max_dr=5
+
+          [[network_server.network_settings.extra_channels]]
+          frequency=867500000
+          min_dr=0
+          max_dr=5
+
+          [[network_server.network_settings.extra_channels]]
+          frequency=867700000
+          min_dr=0
+          max_dr=5
+
+          [[network_server.network_settings.extra_channels]]
+          frequency=867900000
+          min_dr=0
+          max_dr=5
+
+          [[network_server.network_settings.extra_channels]]
+          frequency=870000000
+          min_dr=0
+          max_dr=5
+
+          # Class B settings
+          [network_server.network_settings.class_b]
+          # Ping-slot data-rate.
+          ping_slot_dr=0    
+          ping_slot_frequency=0                                 
+      
+
