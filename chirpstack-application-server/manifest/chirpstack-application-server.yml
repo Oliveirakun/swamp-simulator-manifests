@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: chirpstack-application-server
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 31080
+  selector:
+    app: chirpstack-application
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chirpstack-application-server-internal
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8001
+      targetPort: 8001      
+  selector:
+    app: chirpstack-application    
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chirpstack-application-server  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chirpstack-application
+  template:
+    metadata:
+      labels:
+        app: chirpstack-application
+    spec:      
+      containers:
+      - name: chirpstack-application-server
+        image: chirpstack/chirpstack-application-server:3.16
+        ports:
+          - name: tcp-port
+            containerPort: 8080
+            protocol: TCP
+          - name: tcp-port-int
+            containerPort: 8001
+            protocol: TCP                
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresdb-app-server  
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5433
+      targetPort: 5433      
+  selector:
+    app:  postgresdb-app
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  postgresdb-app-server   
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  postgresdb-app
+  template:
+    metadata:
+      labels:
+        app:  postgresdb-app
+    spec:      
+      volumes:
+      - name: scripts-volume
+        configMap:
+          name: install-extensions-script
+      containers:
+      - name:  postgresdb-app-server 
+        image: postgres:13-alpine
+        args: ["-p 5433"]
+        volumeMounts:
+          - mountPath: /scripts
+            name: scripts-volume
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh","-c","cp scripts/extensions-script.sql docker-entrypoint-initdb.d"]            
+        ports:
+          - name: tcp-port
+            containerPort: 5433
+            protocol: TCP      
+ 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: install-extensions-script
+data:
+    extensions-script.sql: |
+      \c chirpstack_as
+      create extension pg_trgm;
+      create extension hstore;
+      \q
+  
+
