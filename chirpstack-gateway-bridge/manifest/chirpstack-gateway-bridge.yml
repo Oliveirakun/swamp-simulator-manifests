@@ -11,6 +11,7 @@ spec:
     metadata:
       labels:
         app: chirpstack-gateway
+        role: mqtt-proxy
     spec:
       containers:
       - name: gmqtt-proxy
