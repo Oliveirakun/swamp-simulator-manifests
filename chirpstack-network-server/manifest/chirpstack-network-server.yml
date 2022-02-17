@@ -57,7 +57,7 @@ kind: Service
 metadata:
   name: postgresdb  
 spec:
-  type: ClusterIP
+  clusterIP: None
   ports:
     - port: 5432
       targetPort: 5432      
@@ -66,11 +66,11 @@ spec:
 
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgresdb  
 spec:
-  replicas: 1
+  serviceName: "postgresdb"
   selector:
     matchLabels:
       app: postgres
@@ -78,10 +78,18 @@ spec:
     metadata:
       labels:
         app: postgres
-    spec:      
+    spec:
+      volumes:      
+      - name: postgresdb-data
+        hostPath:
+          path: /tmp/postgresdb
+          type: DirectoryOrCreate
       containers:
       - name: postgresdb
         image: postgres:13-alpine
+        volumeMounts:          
+          - mountPath: /usr/local/pgsql/data
+            name: postgresdb-data
         ports:
           - name: tcp-port
             containerPort: 5432
@@ -105,8 +113,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redisdb
-spec:
-  replicas: 1
+spec:  
   selector:
     matchLabels:
       app: redis
