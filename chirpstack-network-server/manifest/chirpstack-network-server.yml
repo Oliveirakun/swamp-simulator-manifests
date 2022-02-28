@@ -50,6 +50,7 @@ data:
     mosquitto.conf: |
       listener 1884
       allow_anonymous true
+      protocol mqtt
                           
         
 ---
