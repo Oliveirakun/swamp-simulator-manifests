@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: gmqtt-proxy
-        image: oliveirakundocker/gmqtt-proxy:v0.1
+        image: oliveirakundocker/gmqtt-proxy:v0.2
       - name: chirpstack-gateway-bridge
         image: oliveirakundocker/chirpstack-gateway-bridge:v0.2
       - name: lora-pkt-forwarder
