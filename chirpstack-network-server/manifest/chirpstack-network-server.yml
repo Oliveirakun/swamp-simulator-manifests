@@ -48,7 +48,8 @@ metadata:
   name: eclipse-mosquitto-config
 data:
     mosquitto.conf: |
-      listener 1884      
+      listener 1884
+      allow_anonymous true
                           
         
 ---
