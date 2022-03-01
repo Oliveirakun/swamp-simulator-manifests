@@ -41,7 +41,7 @@ spec:
     spec:      
       containers:
       - name: chirpstack-application-server
-        image: chirpstack/chirpstack-application-server:3.16
+        image: oliveirakundocker/chirpstack-application-server:3.16
         ports:
           - name: tcp-port
             containerPort: 8080
