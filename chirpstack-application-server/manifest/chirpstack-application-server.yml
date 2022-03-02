@@ -51,7 +51,7 @@ spec:
             protocol: TCP
         readinessProbe:
           httpGet:
-            path: /api/users
+            path: /api
             port: 8080        
           initialDelaySeconds: 2
           periodSeconds: 2    
