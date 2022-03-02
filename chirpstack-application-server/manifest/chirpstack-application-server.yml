@@ -48,7 +48,13 @@ spec:
             protocol: TCP
           - name: tcp-port-int
             containerPort: 8001
-            protocol: TCP                
+            protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /api/users
+            port: 8080        
+          initialDelaySeconds: 2
+          periodSeconds: 2    
 
 ---
 apiVersion: v1
