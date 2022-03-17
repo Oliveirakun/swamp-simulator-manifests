@@ -1,62 +1,6 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: eclipse-mosquitto
-spec:
-  type: NodePort
-  ports:
-    - port: 1884
-      targetPort: 1884
-      nodePort: 31884
-  selector:
-    app: mosquitto
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: eclipse-mosquitto
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mosquitto
-  template:
-    metadata:
-      labels:
-        app: mosquitto
-    spec:
-      volumes:
-      - name: config
-        configMap:
-          name: eclipse-mosquitto-config      
-      containers:
-      - name: eclipse-mosquitto
-        image: eclipse-mosquitto:1.6
-        volumeMounts:
-          - mountPath: /mosquitto/config
-            name: config
-        ports:
-          - name: tcp-port
-            containerPort: 1884
-            protocol: TCP
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: eclipse-mosquitto-config
-data:
-    mosquitto.conf: |
-      listener 1884
-      allow_anonymous true
-      protocol mqtt
-                          
-        
----
-apiVersion: v1
-kind: Service
-metadata:
   name: postgresdb  
 spec:
   clusterIP: None
