@@ -11,8 +11,13 @@ spec:
     metadata:
       labels:
         app: chirpstack-gateway
+        role: mqtt-proxy
+      annotations:
+        kubectl.kubernetes.io/default-container: gmqtt-proxy
     spec:
       containers:
+      - name: gmqtt-proxy
+        image: oliveirakundocker/gmqtt-proxy:v0.2
       - name: chirpstack-gateway-bridge
         image: oliveirakundocker/chirpstack-gateway-bridge:v0.2
       - name: lora-pkt-forwarder

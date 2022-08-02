@@ -41,14 +41,20 @@ spec:
     spec:      
       containers:
       - name: chirpstack-application-server
-        image: chirpstack/chirpstack-application-server:3.16
+        image: oliveirakundocker/chirpstack-application-server:3.16
         ports:
           - name: tcp-port
             containerPort: 8080
             protocol: TCP
           - name: tcp-port-int
             containerPort: 8001
-            protocol: TCP                
+            protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /api
+            port: 8080        
+          initialDelaySeconds: 2
+          periodSeconds: 2    
 
 ---
 apiVersion: v1
@@ -56,7 +62,7 @@ kind: Service
 metadata:
   name: postgresdb-app-server  
 spec:
-  type: ClusterIP
+  clusterIP: None
   ports:
     - port: 5433
       targetPort: 5433      
@@ -65,11 +71,11 @@ spec:
 
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name:  postgresdb-app-server   
 spec:
-  replicas: 1
+  serviceName: "postgresdb-app-server"
   selector:
     matchLabels:
       app:  postgresdb-app
@@ -82,6 +88,10 @@ spec:
       - name: scripts-volume
         configMap:
           name: install-extensions-script
+      - name: postgres-data
+        hostPath:
+          path: /tmp/postgresdb-app-server
+          type: DirectoryOrCreate    
       containers:
       - name:  postgresdb-app-server 
         image: postgres:13-alpine
@@ -89,6 +99,8 @@ spec:
         volumeMounts:
           - mountPath: /scripts
             name: scripts-volume
+          - mountPath: /usr/local/pgsql/data
+            name: postgres-data  
         lifecycle:
           postStart:
             exec:
